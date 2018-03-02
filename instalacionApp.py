@@ -2,51 +2,63 @@ import subprocess
 import time
 import os
 
-#instalacion de una app
-#time.sleep(5)
+#preparacion del directorio del emulador
+time.sleep(20)
 os.chdir("Sdk/platform-tools")
 
-
-
-
-
-
-
-
-
-
-
-#obtencion de paquetes
-subprocess.Popen(['./adb root'], shell=True)
-prueba='./adb shell "pm list packages"'
-
-packages=subprocess.Popen([prueba],shell=True)
-out, err = packages.communicate()
-#print "este es el pk "+out
-"""for element in out:
-	print element 
-	if "chess" in element:
-    		print ("lo encontre")
-		print element"""
-
-
-
-
-"""time.sleep(20)
+#instalacion de una app
 archivo=open("datasetPrueba.txt", "r")
-linea=archivo.read()
-while linea!="":
-	ruta=linea
-	instalador="./adb install " + linea
+
+for g in archivo.readlines():
+	instalador="./adb install " + g
 	print(instalador) 
 	subprocess.Popen([instalador], shell=True)
+	time.sleep(60)
 	detenerAVD="./adb kill-server"
-	subprocess.Popen([detenerAVD], shell=True)
+	subprocess.call([detenerAVD], shell=True)
 	reconectarHost="./adb reconnect"
-	subprocess.Popen([reconectarHost], shell=True)
+	subprocess.call([reconectarHost], shell=True)
 	reconectarAVD="./adb reconnect device"
-	subprocess.Popen([reconectarAVD], shell=True)
+	subprocess.call([reconectarAVD], shell=True)
+	time.sleep(10)
 	
-	
-	linea=archivo.read()
-archivo.close() """
+	#obtencion de paquetes
+	subprocess.Popen(['./adb root'], shell=True)
+	prueba='./adb shell "pm list packages"'
+
+	packages=subprocess.Popen([prueba],shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	out, err = packages.communicate()
+	f = open ('paquetes.txt','w')
+	f.write(out)
+	f.close()
+
+	archivoPack=open('paquetes.txt','r')
+	nombreArchivoPartido=g.split('.')
+	nombreArchivo=nombreArchivoPartido[0]
+
+	for s in archivoPack.readlines():
+		if nombreArchivo in s:
+			print ("lo encontre")
+			print "El paquete es: "+s
+		
+		print s
+
+archivoPack.close()
+
+
+archivo.close()
+
+
+
+
+
+
+
+#for element in out:
+#	print element 
+#	if "chess" in element:
+#    		print ("lo encontre")
+#		print element
+
+
+
