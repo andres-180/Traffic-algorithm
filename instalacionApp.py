@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import subprocess
 import time
 import os
@@ -28,7 +29,6 @@ for g in archivo.readlines():
 
 	packages=subprocess.Popen([prueba],shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = packages.communicate()
-	subprocess.call(['exit'], shell=True)
 	f = open('paquetes.txt','w')
 	f.write(out)
 	f.close()
@@ -36,18 +36,21 @@ for g in archivo.readlines():
 	archivoPack=open('paquetes.txt','r')
 	nombreArchivoPartido=g.split('.')
 	nombreArchivo=nombreArchivoPartido[0]
-
 	for s in archivoPack.readlines():
 		if nombreArchivo in s:
 			paqueteCompleto=s.split(':')
 			nombrePaquete=paqueteCompleto[1]
-			uninstall="./adb uninstall "+ nombrePaquete
+			nombrePaquete2=nombrePaquete.strip()
+#ejecucion monkey 
+			comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" 500 ＞ testLogs.txt"
+			subprocess.call([comandoMonkey],shell=True)
 #completar desinstalacion
-			subprocess.Popen([uninstall], shell=True)
+			#des="./adb shell pm uninstall -k "+nombrePaquete2
+			#subprocess.call([des],shell=True)
 			#time.sleep(120)			
 			
 			
-			print "El paquete es: "+uninstall
+			print "finish"
 		
 		
 
@@ -59,14 +62,6 @@ archivo.close()
 
 
 
-
-
-
-#for element in out:
-#	print element 
-#	if "chess" in element:
-#    		print ("lo encontre")
-#		print element
 
 
 
