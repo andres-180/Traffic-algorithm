@@ -32,8 +32,9 @@ for g in archivo.readlines():
 			subprocess.call([reconectarHost], shell=True)
 			reconectarAVD="./adb reconnect device"
 			subprocess.call([reconectarAVD], shell=True)
+			time.sleep(5)
+			subprocess.call(["./adb reboot"], shell true)
 			time.sleep(10)
-	
 			#obtencion de paquetes
 			subprocess.Popen(['./adb root'], shell=True)
 			prueba='./adb shell "pm list packages"'
