@@ -1,0 +1,6 @@
+/home/sas1/Android/ArchivosTrafico/Apps/chess.apk
+/home/sas1/Android/ArchivosTrafico/Apps/sliter.apk
+/home/sas1/Android/ArchivosTrafico/Apps/bombsquad.apk
+/home/sas1/Android/ArchivosTrafico/Apps/dragon.apk
+/home/sas1/Android/ArchivosTrafico/Apps/Parchisi.apk
+/home/sas1/Android/ArchivosTrafico/Apps/ExpressionTraining.apk

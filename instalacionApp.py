@@ -6,10 +6,11 @@ import sys
 
 #preparacion del directorio del emulador
 time.sleep(20)
-os.chdir("Sdk/platform-tools")
-
+print os.getcwd()
 #instalacion de una app
 archivo=open("datasetPrueba.txt", "r")
+os.chdir("..")
+os.chdir("Sdk/platform-tools")
 
 for g in archivo.readlines():
 	try:
@@ -33,7 +34,7 @@ for g in archivo.readlines():
 			reconectarAVD="./adb reconnect device"
 			subprocess.call([reconectarAVD], shell=True)
 			time.sleep(5)
-			subprocess.call(["./adb reboot"], shell true)
+			subprocess.call(["./adb reboot"], shell= True)
 			time.sleep(10)
 			#obtencion de paquetes
 			subprocess.Popen(['./adb root'], shell=True)
@@ -47,7 +48,9 @@ for g in archivo.readlines():
 
 			archivoPack=open('paquetes.txt','r')
 			nombreArchivoPartido=g.split('.')
-			nombreArchivo=nombreArchivoPartido[0]
+			nombreArchivoPartido2=nombreArchivoPartido[0].split("Apps/")
+			nombreArchivo=nombreArchivoPartido2[1]
+			print "el nombre del archivo es: "+ nombreArchivo
 			for s in archivoPack.readlines():
 				if nombreArchivo in s:
 					paqueteCompleto=s.split(':')
@@ -59,15 +62,21 @@ for g in archivo.readlines():
 #completar desinstalacion
 					des="./adb shell pm uninstall -k "+nombrePaquete2
 					subprocess.call([des],shell=True)
-					time.sleep(120)			
-			
-			
+					time.sleep(30)			
+					subprocess.call(["./adb reboot"], shell =True)
+					time.sleep(10)
 					print "finish"
 		
-		
+				else:
+					listaPa = open("paquetesFallidos.txt", "w")
+					listaPa.write(g)
+					listaPa.close()
 
 			archivoPack.close()
 		else:
+			listaApps = open("instalacionesFallidas.txt", "w")
+			listaApps.write(g)
+			listaApps.close()
 			print "error con la aplicacion"	
 	except IOError as e:
 		t = open("errores.txt", "w")
