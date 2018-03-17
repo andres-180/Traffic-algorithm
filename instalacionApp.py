@@ -56,8 +56,12 @@ for g in archivo.readlines():
 					paqueteCompleto=s.split(':')
 					nombrePaquete=paqueteCompleto[1]
 					nombrePaquete2=nombrePaquete.strip()
-#ejecucion monkey 
-					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 5000 200"
+#ejecucion monkey 			
+
+					wiresharkInicio="tshark -iem1 -f "+ipHost+" -a duration:180 -w 100packets.pcap"
+
+					subprocess.call([wiresharkInicio],shell=True)
+					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 4000 200"
 					subprocess.call([comandoMonkey],shell=True)
 #completar desinstalacion
 					des="./adb shell pm uninstall -k "+nombrePaquete2
