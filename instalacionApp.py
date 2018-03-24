@@ -65,13 +65,16 @@ for g in archivo.readlines():
 				if nombrePaquete2!="com.example.android.apis":
 					
 #ejecucion monkey 			
-					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 3000 100"
-					os.system("gnome-terminal -x sh -c 'cd .. ;cd Sdk; cd platform-tools;"+comandoMonkey +"; exit; exec bash'")
 					wiresharkInicio="tshark -i em1 host 192.168.131.38 -a duration:180 -w "+nombreArchivo+".pcap"
 
-					subprocess.call([wiresharkInicio],shell=True)
+					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 4000 200"
+
+					os.system("gnome-terminal -x sh -c 'cd ..;cd ..;cd Capturas;"+wiresharkInicio +"; exit; exec bash'")
 					
-					#subprocess.call([comandoMonkey],shell=True)
+
+					#subprocess.call([wiresharkInicio],shell=True)
+					
+					subprocess.call([comandoMonkey],shell=True)
 #completar desinstalacion
 					des="./adb shell pm uninstall -k "+nombrePaquete2
 					subprocess.call([des],shell=True)
