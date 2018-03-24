@@ -65,9 +65,9 @@ for g in archivo.readlines():
 				if nombrePaquete2!="com.example.android.apis":
 					
 #ejecucion monkey 			
-					wiresharkInicio="tshark -i em1 host 192.168.131.38 -a duration:180 -w "+nombreArchivo+".pcap"
+					wiresharkInicio="tshark -i em1 host 192.168.131.38 -a duration:300 -w "+nombreArchivo+".pcap"
 
-					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 4000 200"
+					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 6000 300"
 
 					os.system("gnome-terminal -x sh -c 'cd ..;cd ..;cd Capturas;"+wiresharkInicio +"; exit; exec bash'")
 					
