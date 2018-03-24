@@ -12,6 +12,10 @@ archivo=open("datasetPrueba.txt", "r")
 os.chdir("..")
 os.chdir("Sdk/platform-tools")
 
+listaPa = open("paquetesFallidos.txt", "w")
+listaApps = open("instalacionesFallidas.txt", "w")
+cantidad=0;
+
 for g in archivo.readlines():
 	try:
 		commandR="./adb install " + g 
@@ -26,7 +30,8 @@ for g in archivo.readlines():
 		ultimaLineaSE=ultimaLinea.strip()
  		
 		if ultimaLineaSE=="Success":	
-			time.sleep(60)
+			print "instalada"			
+			time.sleep(30)
 			detenerAVD="./adb kill-server"
 			subprocess.call([detenerAVD], shell=True)
 			reconectarHost="./adb reconnect"
@@ -38,7 +43,7 @@ for g in archivo.readlines():
 			time.sleep(10)
 			#obtencion de paquetes
 			subprocess.Popen(['./adb root'], shell=True)
-			prueba='./adb shell "pm list packages"'
+			prueba='./adb shell "pm list packages -3"'
 
 			packages=subprocess.Popen([prueba],shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			out, err = packages.communicate()
@@ -51,18 +56,22 @@ for g in archivo.readlines():
 			nombreArchivoPartido2=nombreArchivoPartido[0].split("Apps/")
 			nombreArchivo=nombreArchivoPartido2[1]
 			print "el nombre del archivo es: "+ nombreArchivo
+			
 			for s in archivoPack.readlines():
-				if nombreArchivo in s:
-					paqueteCompleto=s.split(':')
-					nombrePaquete=paqueteCompleto[1]
-					nombrePaquete2=nombrePaquete.strip()
+				#if nombreArchivo in s:
+				paqueteCompleto=s.split(':')
+				nombrePaquete=paqueteCompleto[1]
+				nombrePaquete2=nombrePaquete.strip()
+				if nombrePaquete2!="com.example.android.apis":
+					
 #ejecucion monkey 			
-
-					wiresharkInicio="tshark -iem1 -f "+ipHost+" -a duration:180 -w 100packets.pcap"
+					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 3000 100"
+					os.system("gnome-terminal -x sh -c 'cd .. ;cd Sdk; cd platform-tools;"+comandoMonkey +"; exit; exec bash'")
+					wiresharkInicio="tshark -i em1 host 192.168.131.38 -a duration:180 -w "+nombreArchivo+".pcap"
 
 					subprocess.call([wiresharkInicio],shell=True)
-					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 4000 200"
-					subprocess.call([comandoMonkey],shell=True)
+					
+					#subprocess.call([comandoMonkey],shell=True)
 #completar desinstalacion
 					des="./adb shell pm uninstall -k "+nombrePaquete2
 					subprocess.call([des],shell=True)
@@ -72,22 +81,25 @@ for g in archivo.readlines():
 					print "finish"
 		
 				else:
-					listaPa = open("paquetesFallidos.txt", "w")
+					
 					listaPa.write(g)
-					listaPa.close()
+					
 
 			archivoPack.close()
 		else:
-			listaApps = open("instalacionesFallidas.txt", "w")
-			listaApps.write(g)
-			listaApps.close()
+			cantidad=cantidad+1;
+			listaApps.write(g+", "+ultimaLineaSE+"\n")
+			
 			print "error con la aplicacion"	
 	except IOError as e:
 		t = open("errores.txt", "w")
 		t.write("I/O error({0}): {1}".format(e.errno, e.strerror)+"\n")
 		t.close()
-
+listaApps.close()
+listaPa.close()
 archivo.close()
+print "cantidad de fallidas: "+ str(cantidad)
+
 
 
 
