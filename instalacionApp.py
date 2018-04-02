@@ -14,7 +14,8 @@ os.chdir("Sdk/platform-tools")
 
 listaPa = open("paquetesFallidos.txt", "w")
 listaApps = open("instalacionesFallidas.txt", "w")
-cantidad=0;
+cantidad=0
+paqueteAUsar=""
 
 for g in archivo.readlines():
 	try:
@@ -64,17 +65,18 @@ for g in archivo.readlines():
 				nombrePaquete2=nombrePaquete.strip()
 				if nombrePaquete2!="com.example.android.apis":
 					
-#ejecucion monkey 			
+
+					paqueteAUsar=nombrePaquete2
 					wiresharkInicio="tshark -i em1 host 192.168.131.38 -a duration:300 -w "+nombreArchivo+".pcap"
-
-					comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 6000 300"
-
-					os.system("gnome-terminal -x sh -c 'cd ..;cd ..;cd Capturas;"+wiresharkInicio +"; exit; exec bash'")
+#ejecucion monkey 
+					#comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 6000 300"
+					
+					os.system("gnome-terminal -x sh -c 'cd ..;cd ..;python monkeyR.py; exit; exec bash'")
 					
 
-					#subprocess.call([wiresharkInicio],shell=True)
+					subprocess.call([wiresharkInicio],shell=True)
 					
-					subprocess.call([comandoMonkey],shell=True)
+					#subprocess.call([comandoMonkey],shell=True)
 #completar desinstalacion
 					des="./adb shell pm uninstall -k "+nombrePaquete2
 					subprocess.call([des],shell=True)
@@ -104,7 +106,8 @@ archivo.close()
 print "cantidad de fallidas: "+ str(cantidad)
 
 
-
+def getPaquete():
+	return paqueteAUsar
 
 
 
