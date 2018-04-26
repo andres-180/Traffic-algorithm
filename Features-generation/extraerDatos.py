@@ -48,19 +48,20 @@ def tcp_conversation_exchange(captura):  # N1
     return pkts
 
 
-def dist_remote_tcp_port(captura, IP_HONEYPOT):  # N2
+def dist_remote_tcp_port(captura):  # N2
     """ Numero total de puertos distintos a los puertos TCP """
     print "--------------- Obteniendo dist remote tcp port -------------------"
     numero_puertos = 0
     for pkt in captura:
         try:
-            if pkt.transport_layer == 'TCP' and pkt.ip.src == IP_HONEYPOT:
+            if pkt.transport_layer == 'TCP' and pkt.ip.src == IP_RED:
                 if pkt['TCP'].dstport != '80':
                     numero_puertos = numero_puertos + 1
         except AttributeError:
             pass
-        except Exception:
+        except Exception, e:
             print 'Error en dist_remote_tcp_port'
+            print e
     return numero_puertos
 
 def remote_ips(pkts):  # N3
@@ -171,7 +172,38 @@ def remote_app_bytes(captura):  # N10
             print 'Error en remote_app_bytes'
     return tamanio_pkt
 
-def dns_info(captura):
+def http_pks(captura):  # N11
+    """ Tiempo de duracion de la pagina web """
+    print "--------------- Obteniendo paquetes HTTP -------------------"
+    pkts = []
+    for pkt in captura:
+			if pkt[pkt.highest_layer].layer_name=="http":
+		            if pkt.ip.src == IP_RED:
+		                    pkts.append(pkt)
+
+		  
+    return pkts		
+   
+
+def app_packets(captura):  # N14
+    """ numero de paquetes IP incluidos los del servidor DNS """
+    print "--------------- Obteniendo app pkts -------------------"
+    pkts_temp = []
+    for pkt in captura:
+        try:
+            if pkt.ip.src == IP_RED:
+                for lyr in pkt.layers:
+                    if lyr.layer_name in 'ip':
+                        if pkt not in pkts_temp:
+                            pkts_temp.append(pkt)
+        except AttributeError:
+            pass
+        except Exception:
+            print 'Error en app_packets'
+    return pkts_temp
+
+
+def dns_query_times(captura):
 	""" Numero de paquetes DNS """
 	print "--------------- Obteniendo DNS -------------------"
 	pkts = []
@@ -230,31 +262,28 @@ def crear_matriz(ruta_datos, ruta_mtx_trans):
                     captura = pyshark.FileCapture(x)
                     #if len(captura) > 0:
                     try:
-
-                           
-                            print nom(x) 
                             print "################### ESCRIBIENDO DATOS #############################"
                             print x
                             print "###################################################################"
 
+                            pktss=pkt_without_dns(captura)
                             matriz.writelines(x + ';' + str(len(tcp_conversation_exchange(captura))) + ';'
                                               + str(dist_remote_tcp_port(captura)) + ';'
                                               + str(
-                                len(remote_ips(pkt_without_dns(captura)))) + ';'
-                                              + str(app_bytes(pkt_without_dns(captura))) + ';'
+                                len(remote_ips(pktss))) + ';'
+                                              + str(app_bytes(pktss)) + ';'
                                               + str(
-                                len(udp_packets(pkt_without_dns(captura)))) + ';'
+                                len(udp_packets(pktss))) + ';'
                                               + str(len(source_app_packets(captura))) + ';'
                                               + str(len(remote_app_packets(captura))) + ';'
                                               + str(source_app_bytes(captura)) + ';'
                                               + str(remote_app_bytes(captura)) + ';'
-                                              + str(duration(captura)) + ';'
-                                              + str(avg_local_pkt_rate(captura)) + ';'
-                                              + str(avg_remote_pkt_rate(captura)) + ';'
+                                              + str(len(http_pks(captura))) + ';'
                                               + str(len(app_packets(captura))) + ';'
                                               + str(len(dns_query_times(captura))) + ';'  + '\n')
-                    except:
+                    except Exception, e:
                             print "exception during the pcap lecture process"
+                            print e
                             problems_txt.writelines(x + '\n')
                             captura.close()
                             break
@@ -268,4 +297,3 @@ ruta_dataset = 'malware.csv'
 ruta_matriz = 'general.csv'
 ruta_problems_file = 'problems13.txt'
 crear_matriz(ruta_dataset, ruta_matriz)
-
