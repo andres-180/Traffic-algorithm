@@ -3,7 +3,7 @@ listaAppsCompleta=open("datasetMal.txt", "w")
 t=0;
 for s in listaApps.readlines():
 	s2=s.strip()
-	listaAppsCompleta.write("/home/sas1/Android/ArchivosTrafico/Apps/"+s2+'\n')
+	listaAppsCompleta.write("/home/webdev/Android/ArchivosTrafico/Apps/"+s2+'\n')
 	t=t+1
 
 print t
