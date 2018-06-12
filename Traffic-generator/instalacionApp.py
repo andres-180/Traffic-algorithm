@@ -67,7 +67,7 @@ for g in archivo.readlines():
 					
 
 					paqueteAUsar=nombrePaquete2
-					wiresharkInicio="tshark -i em1 host 192.168.131.24 -a duration:300 -w ../../Capturas/DroidKungFu3/"+nombreArchivo+".pcap"
+					wiresharkInicio="tshark -i em1 host 192.168.131.24 -a duration:300 -w ../../Capturas/"+paqueteAUsar+".pcap"
 #ejecucion monkey 
 					#comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 6000 300"
 					print "Iniciando monkey"
