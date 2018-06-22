@@ -54,7 +54,7 @@ for g in archivo.readlines():
 
 			archivoPack=open('paquetes.txt','r')
 			nombreArchivoPartido=g.split('.')
-			nombreArchivoPartido2=nombreArchivoPartido[0].split("Apps/")
+			nombreArchivoPartido2=nombreArchivoPartido[0].split("Apps/") #Cambiar Apps por el nombre de la carpeta donde se encuentran las aplicaciones
 			nombreArchivo=nombreArchivoPartido2[1]
 			print "el nombre del archivo es: "+ nombreArchivo
 			
@@ -67,7 +67,7 @@ for g in archivo.readlines():
 					
 
 					paqueteAUsar=nombrePaquete2
-					wiresharkInicio="tshark -i em1 host 192.168.131.24 -a duration:300 -w ../../Capturas/"+paqueteAUsar+".pcap"
+					wiresharkInicio="tshark -i em1 host 192.168.131.24 -a duration:300 -w ../../Capturas/"+paqueteAUsar+".pcap" #cambiar em1 por su interfaz de red
 #ejecucion monkey 
 					#comandoMonkey="./adb -e shell monkey --ignore-crashes -p "+nombrePaquete2+" -v --throttle 6000 300"
 					print "Iniciando monkey"
